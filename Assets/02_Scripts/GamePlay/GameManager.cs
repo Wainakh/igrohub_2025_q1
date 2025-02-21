@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +9,7 @@ public class GameManager : MonoBehaviour
     private CameraFollower _camera;
     private IPlayer _player;
     private IInputSystem _input;
-    private List<IInteractable> _interactables;
+    private List<IInteractable> _interactables = new List<IInteractable>();
     private IUserInterface _ui;
     private IDialogManager _dialog;
 
@@ -46,6 +45,8 @@ public class GameManager : MonoBehaviour
                 // _gameData.Score += coin.AddScoreAmount;
                 coin.gameObject.SetActive(false);
                 break;
+            case IDialogHandler dialog:
+                break;
         }
     }
 
@@ -73,12 +74,3 @@ public class GameManager : MonoBehaviour
 
     private IPlayer CreatePlayer() => FindFirstObjectByType<Player>();
 }
-
-//Интеракты - начать с базового взаимодействия (на OnTrigger). Получение очков
-public interface IInteractable{}
-
-//UI - верстка, MVC, где то тут - GameManager
-public interface IUserInterface{}
-
-//Диалоги - DialogManager, верстка префаба диалогового окна, Scriptable object. ЗАгрузка конфигов диалогов из ресурсов. Диалог стартер
-public interface IDialogManager{}

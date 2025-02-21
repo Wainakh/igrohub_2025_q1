@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class RotationAnimation : MonoBehaviour
+public class CoinAnimation : MonoBehaviour
 {
     [SerializeField] private AnimationCurve _jumpAnimation;
     [SerializeField] private float _speed = 200;

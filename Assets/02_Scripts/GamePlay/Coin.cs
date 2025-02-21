@@ -7,9 +7,3 @@ public class Coin : MonoBehaviour, IScoreChanger
     public int AddScoreAmount => +_cost;
     GameObject IScoreChanger.gameObject => base.gameObject;
 }
-
-internal interface IScoreChanger : IInteractable
-{
-    int AddScoreAmount { get; }
-    GameObject gameObject { get; }
-}

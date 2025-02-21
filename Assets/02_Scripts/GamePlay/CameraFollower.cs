@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class CameraFollower : MonoBehaviour
 {
-    private Transform _followtarget;
+    private Transform _followTarget;
     private Vector3 _offset;
 
     public void SetFollowTarget(Transform target)
     {
-        _followtarget = target;
-        _offset = transform.position - _followtarget.position;
+        _followTarget = target;
+        _offset = transform.position - _followTarget.position;
     }
 
     private void Update()
     {
-        if (_followtarget != default)
-            transform.position = _followtarget.position + _offset;
+        if (_followTarget != default)
+            transform.position = _followTarget.position + _offset;
     }
 }

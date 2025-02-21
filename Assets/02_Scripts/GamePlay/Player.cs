@@ -49,10 +49,3 @@ public class Player : MonoBehaviour, IPlayer
             OnInteracted?.Invoke(this, interactable);
     }
 }
-
-public interface IPlayer
-{
-    Transform transform { get; }
-    void SetInput(IInputSystem input);
-    event Action<IPlayer, IInteractable> OnInteracted;
-}

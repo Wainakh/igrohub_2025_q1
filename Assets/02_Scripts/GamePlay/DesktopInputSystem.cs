@@ -15,13 +15,3 @@ public class DesktopInputSystem : ITickable, IInputSystem
             OnAxis?.Invoke(new Vector2(x, y));
     }
 }
-
-public interface ITickable
-{
-    public void Tick(float deltaTime);
-}
-
-public interface IInputSystem
-{
-    event Action<Vector2> OnAxis;
-}
