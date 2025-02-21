@@ -1,2 +1,8 @@
 ﻿//Интеракты - начать с базового взаимодействия (на OnTrigger). Получение очков
-public interface IInteractable{}
+
+using UnityEngine;
+
+public interface IInteractable
+{
+    GameObject gameObject { get; }
+}

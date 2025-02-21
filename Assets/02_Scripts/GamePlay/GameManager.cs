@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // GameManager - god obj. Реализация результата интеракции, очки, запуск диалогов. Бинды интеракций
@@ -9,7 +10,7 @@ public class GameManager : MonoBehaviour
     private CameraFollower _camera;
     private IPlayer _player;
     private IInputSystem _input;
-    private List<IInteractable> _interactables = new List<IInteractable>();
+    private List<IInteractable> _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
     private IUserInterface _ui;
     private IDialogManager _dialog;
 
@@ -32,6 +33,8 @@ public class GameManager : MonoBehaviour
 
         _camera = CreateCamera();
         _camera.SetFollowTarget(_player.transform);
+
+        _interactables = new List<IInteractable>(transform.GetComponentsInChildren<IInteractable>());
         yield break;
     }
 
@@ -52,10 +55,28 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameLoop()
     {
+
         while (true)
         {
-            yield return null;
+            TurnOnInteractedObjects();
+            
+            // Ждем финального диалога 
+            yield return LevelFinish();
+            
+            yield break;
         }
+    }
+
+    private void TurnOnInteractedObjects()
+    {
+        foreach (var interactable in _interactables)
+            interactable.gameObject.SetActive(true);
+    }
+
+    private IEnumerator LevelFinish()
+    {
+        while (true)
+            yield return null;
     }
 
     private void Update()
