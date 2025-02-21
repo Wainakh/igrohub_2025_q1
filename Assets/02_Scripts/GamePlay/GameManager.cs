@@ -9,7 +9,10 @@ public class GameManager : MonoBehaviour
     private CameraFollower _camera;
     private IPlayer _player;
     private IInputSystem _input;
-    private List<IInteractable> _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
+
+    private List<IInteractable>
+        _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
+
     private IUserInterface _ui;
     private IDialogManager _dialog;
 
@@ -59,6 +62,7 @@ public class GameManager : MonoBehaviour
         {
             _input.Lock();
 
+            ReturnPlayerToStartPosition();
             TurnOnInteractedObjects();
 
             yield return ShowStartMessage();
@@ -66,7 +70,14 @@ public class GameManager : MonoBehaviour
             _input.Unlock();
 
             yield return LevelFinish();
+            
+            Debug.Log($"Restart game");
         }
+    }
+
+    private void ReturnPlayerToStartPosition()
+    {
+        _player.transform.position = Vector3.zero;
     }
 
     private IEnumerator ShowStartMessage()
@@ -91,7 +102,15 @@ public class GameManager : MonoBehaviour
     {
         // Ждем финального диалога 
         while (true)
+        {
+            if (Vector3.Distance(_player.transform.position, Vector3.zero) > 20)
+            {
+                Debug.Log($"Finish game");
+                yield break;
+            }
+
             yield return null;
+        }
     }
 
     private void Update()
