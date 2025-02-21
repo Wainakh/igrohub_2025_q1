@@ -9,10 +9,7 @@ public class GameManager : MonoBehaviour
     private CameraFollower _camera;
     private IPlayer _player;
     private IInputSystem _input;
-
-    private List<IInteractable>
-        _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
-
+    private List<IInteractable> _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
     private IUserInterface _ui;
     private IDialogManager _dialog;
 
