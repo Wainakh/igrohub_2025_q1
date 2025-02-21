@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour
     private IUserInterface _ui;
     private IDialogManager _dialog;
 
+    private List<ITickable> _tickables = new List<ITickable>();
+
     private IEnumerator Start()
     {
         yield return new WaitForSeconds(1f);
@@ -26,39 +29,50 @@ public class GameManager : MonoBehaviour
 
         _player = CreatePlayer();
         _player.SetInput(_input);
+        _player.OnInteracted += Interact;
 
+        _camera = CreateCamera();
         _camera.SetFollowTarget(_player.transform);
         yield break;
+    }
+
+    private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
+
+    private void Interact(IPlayer player, IInteractable obj)
+    {
+        switch (obj)
+        {
+            case IScoreChanger coin:
+                // _gameData.Score += coin.AddScoreAmount;
+                coin.gameObject.SetActive(false);
+                break;
+        }
     }
 
     private IEnumerator GameLoop()
     {
         while (true)
         {
-
+            yield return null;
         }
+    }
+
+    private void Update()
+    {
+        var deltaTime = Time.deltaTime;
+        foreach (var tickable in _tickables)
+            tickable.Tick(deltaTime);
     }
 
     private IInputSystem CreateInput()
     {
-        throw new System.NotImplementedException();
+        var input = new DesktopInputSystem();
+        _tickables.Add(input);
+        return input;
     }
 
-    private IPlayer CreatePlayer()
-    {
-        throw new System.NotImplementedException();
-    }
+    private IPlayer CreatePlayer() => FindFirstObjectByType<Player>();
 }
-
-//Персонаж - перемещение (lerp от точки к точке)
-public interface IPlayer
-{
-    Transform transform { get; }
-    void SetInput(IInputSystem input);
-}
-
-//Инпут - начать с update -> перенести в интерфейс -> реализовать на ПК -> оставить реализацию на мобилку
-public interface IInputSystem{}
 
 //Интеракты - начать с базового взаимодействия (на OnTrigger). Получение очков
 public interface IInteractable{}

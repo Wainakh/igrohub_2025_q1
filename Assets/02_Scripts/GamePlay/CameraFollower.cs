@@ -8,7 +8,7 @@ public class CameraFollower : MonoBehaviour
     public void SetFollowTarget(Transform target)
     {
         _followtarget = target;
-        _offset = _followtarget.position - transform.position;
+        _offset = transform.position - _followtarget.position;
     }
 
     private void Update()
