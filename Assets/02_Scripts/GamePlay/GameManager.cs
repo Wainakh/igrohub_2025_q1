@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 // GameManager - god obj. Реализация результата интеракции, очки, запуск диалогов. Бинды интеракций
@@ -18,14 +17,15 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return new WaitForSeconds(1f);
         yield return Initialization();
+        yield return new WaitForSeconds(.1f);
         yield return GameLoop();
     }
 
     private IEnumerator Initialization()
     {
         _input = CreateInput();
+        _input.Lock();
 
         _player = CreatePlayer();
         _player.SetInput(_input);
@@ -38,33 +38,47 @@ public class GameManager : MonoBehaviour
         yield break;
     }
 
-    private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
-
     private void Interact(IPlayer player, IInteractable obj)
     {
         switch (obj)
         {
             case IScoreChanger coin:
                 // _gameData.Score += coin.AddScoreAmount;
+                Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
                 coin.gameObject.SetActive(false);
                 break;
             case IDialogHandler dialog:
+                Debug.Log($"Interact with {nameof(IDialogHandler)}. Start dialog");
                 break;
         }
     }
 
     private IEnumerator GameLoop()
     {
-
         while (true)
         {
+            _input.Lock();
+
             TurnOnInteractedObjects();
-            
-            // Ждем финального диалога 
+
+            yield return ShowStartMessage();
+
+            _input.Unlock();
+
             yield return LevelFinish();
-            
-            yield break;
         }
+    }
+
+    private IEnumerator ShowStartMessage()
+    {
+        var wait = new WaitForSeconds(1f);
+        for (var i = 3; i > 0; i--)
+        {
+            Debug.Log($"Start in {i}");
+            yield return wait;
+        }
+
+        Debug.Log($"Start game");
     }
 
     private void TurnOnInteractedObjects()
@@ -75,6 +89,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator LevelFinish()
     {
+        // Ждем финального диалога 
         while (true)
             yield return null;
     }
@@ -93,5 +108,6 @@ public class GameManager : MonoBehaviour
         return input;
     }
 
+    private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
     private IPlayer CreatePlayer() => FindFirstObjectByType<Player>();
 }
