@@ -58,11 +58,16 @@ namespace Igrohub
         
         private void Interact(IPlayer player, IInteractable obj)
         {
-            if (obj is IScoreChanger coin)
+            switch (obj)
             {
-                Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
-                _playerDataController.AddToScore(coin.AddScoreAmount);
-                coin.gameObject.SetActive(false);
+                case IScoreChanger coin:
+                    Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
+                    _playerDataController.AddToScore(coin.AddScoreAmount);
+                    coin.gameObject.SetActive(false);
+                    break;
+                case IDialogHandler dialog:
+                    Debug.Log($"Interact with {nameof(IDialogHandler)}. Need to start dialog");
+                    break;
             }
         }
 
