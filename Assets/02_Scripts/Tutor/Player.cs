@@ -5,7 +5,7 @@ namespace Igrohub
 {
     [RequireComponent(typeof(Collider))]
     [RequireComponent(typeof(Rigidbody))]
-    public class Player : MonoBehaviour, IPlayer
+    public class Player : MonoBehaviour, IPlayer, ITickable
     {
         [SerializeField] private float _speed;
 
@@ -26,12 +26,12 @@ namespace Igrohub
             _movement = axis;
         }
 
-        private void Update()
+        public void Tick(float deltaTime)
         {
-            ApplyMovement();
+            ApplyMovement(deltaTime);
         }
 
-        private void ApplyMovement()
+        private void ApplyMovement(float deltaTime)
         {
             if(!_movement.HasValue)
                 return;
@@ -39,7 +39,7 @@ namespace Igrohub
             var direction = new Vector3(_movement.Value.x, 0, _movement.Value.y);
             var movement = Vector3.ClampMagnitude(direction, 1);
             movement *= _speed;
-            movement *= Time.deltaTime;
+            movement *= deltaTime;
             transform.Translate(movement);
             _movement = null;
         }

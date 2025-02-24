@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Igrohub
 {
-    public class DesktopInputSystem : MonoBehaviour, IInputSystem
+    public class DesktopInputSystem : ITickable, IInputSystem
     {
         public event Action<Vector2> OnAxis;
         
-        public void Update()
+        public void Tick(float deltaTime)
         {
             var x = Input.GetAxis("Horizontal");
             var y = Input.GetAxis("Vertical");

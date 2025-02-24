@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Igrohub
@@ -9,6 +10,8 @@ namespace Igrohub
         private IPlayer _player;
         private IInputSystem _input;
         private IPlayerDataController _playerDataController;
+        private List<ITickable> _tickables = new List<ITickable>();
+
 
         private IEnumerator Start()
         {
@@ -31,6 +34,13 @@ namespace Igrohub
             yield break;
         }
         
+        private void Update()
+        {
+            var deltaTime = Time.deltaTime;
+            foreach (var tickable in _tickables)
+                tickable.Tick(deltaTime);
+        }
+        
         private void Interact(IPlayer player, IInteractable obj)
         {
             if (obj is IScoreChanger coin)
@@ -41,9 +51,19 @@ namespace Igrohub
             }
         }
 
-        private IInputSystem CreateInput() => FindFirstObjectByType<DesktopInputSystem>();
+        private IInputSystem CreateInput()
+        {
+            var input = new DesktopInputSystem();
+            _tickables.Add(input);
+            return input;
+        }
 
-        private IPlayer CreatePlayer() => FindFirstObjectByType<Player>();
+        private IPlayer CreatePlayer()
+        {
+            var player = FindFirstObjectByType<Player>();
+            _tickables.Add(player);
+            return player;
+        }
 
         private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
 
