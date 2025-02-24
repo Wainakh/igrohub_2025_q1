@@ -7,12 +7,14 @@ namespace Igrohub
     public class Player : MonoBehaviour
     {
         [SerializeField] private float _speed;
-        
+
+        private GameManager _gm;
         private IInputSystem _input;
         private Vector2? _movement;
 
         private void Start()
         {
+            _gm = FindFirstObjectByType<GameManager>();
             _input = FindFirstObjectByType<DesktopInputSystem>();
             _input.OnAxis += Move;
         }
@@ -46,7 +48,9 @@ namespace Igrohub
             if (other.gameObject.TryGetComponent<IInteractable>(out var interactable))
             {
                 if (interactable is Coin coin)
-                    Debug.Log($"Interact with coin. Need to add +{coin.AddScoreAmount} to score!");
+                {
+                    _gm.AddToScore(coin.AddScoreAmount);
+                }
             }
         }
     }
