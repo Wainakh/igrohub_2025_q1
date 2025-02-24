@@ -43,7 +43,11 @@ namespace Igrohub
         
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"DETECT COLLIDER: {other.gameObject.name}");
+            if (other.gameObject.TryGetComponent<IInteractable>(out var interactable))
+            {
+                if (interactable is Coin coin)
+                    Debug.Log($"Interact with coin. Need to add +{coin.AddScoreAmount} to score!");
+            }
         }
     }
 }
