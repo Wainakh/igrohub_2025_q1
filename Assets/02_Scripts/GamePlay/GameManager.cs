@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 // GameManager - god obj. Реализация результата интеракции, очки, запуск диалогов. Бинды интеракций
 // Gameloop - старт, рестарт
@@ -12,7 +11,8 @@ public class GameManager : MonoBehaviour
     private IPlayer _player;
     private IInputSystem _input;
 
-    private List<IInteractable> _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
+    // Для запоминания и сброса при перезапуска уровня
+    private List<IInteractable> _interactables = new List<IInteractable>();
 
     private IUserInterface _ui;
     private IDialogManager _dialog;
@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     private List<ITickable> _tickables = new List<ITickable>();
     private IPlayerDataController _playerDataController;
 
+    // Для определения конца уровня
     private bool _isGameEnd;
 
     private IEnumerator Start()
@@ -63,20 +64,28 @@ public class GameManager : MonoBehaviour
         switch (obj)
         {
             case IScoreChanger coin:
-                // _gameData.Score += coin.AddScoreAmount;
                 Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
                 _playerDataController.AddToScore(coin.AddScoreAmount);
                 coin.gameObject.SetActive(false);
 
-                //TODO: Temporary behaviour
                 if (_playerDataController.GetScore() == 1)
                     ShowDialog(1);
-                else if (_playerDataController.GetScore() == 5)
-                    ShowDialog(2, SetGameEnd);
                 break;
             case IDialogHandler dialog:
                 Debug.Log($"Interact with {nameof(IDialogHandler)}. Start dialog");
-                ShowDialog(dialog.GetDialogConfigId(), SetGameEnd);
+                switch (_playerDataController.GetScore())
+                {
+                    case 0:
+                        ShowDialog(4);
+                        break;
+                    case 5:
+                        ShowDialog(2, SetGameEnd);
+                        break;
+                    default:
+                        ShowDialog(3);
+                        break;
+                }
+
                 break;
         }
     }
@@ -102,7 +111,7 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             _isGameEnd = false;
-            
+
             _input.Lock();
 
             ReturnPlayerToStartPosition();
@@ -169,7 +178,6 @@ public class GameManager : MonoBehaviour
         _tickables.Add(input);
         return input;
     }
-
 
     private IUserInterface CreatePlayerInterface() => FindFirstObjectByType<PlayerWidget>();
     private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();

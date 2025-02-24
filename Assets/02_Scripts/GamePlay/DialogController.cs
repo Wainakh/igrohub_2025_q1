@@ -14,8 +14,8 @@ public class DialogController
         _onFinish = onFinish;
     }
 
-    public void Interrupt() => FinishDialog();
-    public void Start() => ShowById(0);
+    public void Interrupt() => TurnOfView();
+    public void Start() => ShowById(_speechId = 0);
     private void ShowById(int id) => _view.Show(_config.GetSpeeches()[id], GoNext);
 
     private void GoNext()
@@ -29,7 +29,12 @@ public class DialogController
 
     private void FinishDialog()
     {
-        _view.HideAll();
+        TurnOfView();
         _onFinish?.Invoke();
+    }
+    
+    private void TurnOfView()
+    {
+        _view.HideAll();
     }
 }

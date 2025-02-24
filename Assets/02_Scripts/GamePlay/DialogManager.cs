@@ -43,7 +43,12 @@ public class DialogManager : IDialogManager
         if(config == null)
             return;
 
-        _controller = new DialogController(config, _view, onFinish);
+        _controller = new DialogController(config, _view, () =>
+        {
+            _controller.Interrupt();
+            _controller = null;
+            onFinish?.Invoke();
+        });
         _controller.Start();
     }
 }
