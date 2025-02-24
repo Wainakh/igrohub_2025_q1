@@ -4,15 +4,15 @@ namespace Igrohub
 {
     public class CameraFollower : MonoBehaviour
     {
-        [SerializeField] Transform _followTarget;
-        
+        Transform _followTarget;
         private Vector3 _offset;
 
-        private void Start()
+        public void SetFollowTarget(Transform target)
         {
+            _followTarget = target;
             _offset = transform.position - _followTarget.position;
         }
-
+        
         private void Update()
         {
             if (_followTarget != default)

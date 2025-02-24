@@ -1,24 +1,26 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Igrohub
 {
     [RequireComponent(typeof(Collider))]
     [RequireComponent(typeof(Rigidbody))]
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour, IPlayer
     {
         [SerializeField] private float _speed;
 
-        private GameManager _gm;
         private IInputSystem _input;
         private Vector2? _movement;
+        Transform IPlayer.transform => base.transform;
 
-        private void Start()
+        public event Action<IPlayer, IInteractable> OnInteracted;
+        
+        public void SetInput(IInputSystem input)
         {
-            _gm = FindFirstObjectByType<GameManager>();
-            _input = FindFirstObjectByType<DesktopInputSystem>();
+            _input = input;
             _input.OnAxis += Move;
         }
-        
+
         private void Move(Vector2 axis)
         {
             _movement = axis;
@@ -28,12 +30,11 @@ namespace Igrohub
         {
             ApplyMovement();
         }
-        
+
         private void ApplyMovement()
         {
             if(!_movement.HasValue)
                 return;
-
 
             var direction = new Vector3(_movement.Value.x, 0, _movement.Value.y);
             var movement = Vector3.ClampMagnitude(direction, 1);
@@ -42,16 +43,16 @@ namespace Igrohub
             transform.Translate(movement);
             _movement = null;
         }
-        
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.TryGetComponent<IInteractable>(out var interactable))
-            {
-                if (interactable is Coin coin)
-                {
-                    _gm.AddToScore(coin.AddScoreAmount);
-                }
-            }
+                OnInteracted?.Invoke(this, interactable);
+        }
+
+        private void OnDestroy()
+        {
+            _input.OnAxis -= Move;
         }
     }
 }
