@@ -10,18 +10,25 @@ namespace Igrohub
         private CameraFollower _camera;
         private IPlayer _player;
         private IInputSystem _input;
-        private IPlayerDataController _playerDataController;
-        private List<ITickable> _tickables = new List<ITickable>();
+
+        // Для запоминания и сброса при перезапуска уровня
+        private List<IInteractable> _interactables = new List<IInteractable>();
+
         private IDialogManager _dialog;
 
+        private List<ITickable> _tickables = new List<ITickable>();
+        private IPlayerDataController _playerDataController;
+
+        // Для определения конца уровня
+        private bool _isGameEnd;
 
         private IEnumerator Start()
         {
             yield return Initialization();
-            yield return ShowStartMessage();
-            _input.Unlock();
+            yield return new WaitForSeconds(.1f);
+            yield return GameLoop();
         }
-        
+
         private IEnumerator Initialization()
         {
             _input = CreateInput();
@@ -35,12 +42,94 @@ namespace Igrohub
             _camera.SetFollowTarget(_player.transform);
 
             _playerDataController = CreateDataController();
-            
+
+            _interactables = new List<IInteractable>(transform.GetComponentsInChildren<IInteractable>());
+
             _dialog = new DialogManager();
-            
+
             yield break;
         }
-        
+
+        private PlayerDataController CreateDataController()
+        {
+            var data = new PlayerData();
+            var view = CreatePlayerInterface();
+            return new PlayerDataController(view, data);
+        }
+
+        private void Interact(IPlayer player, IInteractable obj)
+        {
+            switch (obj)
+            {
+                case IScoreChanger coin:
+                    Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
+                    _playerDataController.AddToScore(coin.AddScoreAmount);
+                    coin.gameObject.SetActive(false);
+
+                    if (_playerDataController.GetScore() == 1)
+                        ShowDialog(1);
+                    break;
+                case IDialogHandler dialog:
+                    Debug.Log($"Interact with {nameof(IDialogHandler)}. Start dialog");
+                    switch (_playerDataController.GetScore())
+                    {
+                        case 0:
+                            ShowDialog(4);
+                            break;
+                        case 5:
+                            ShowDialog(2, SetGameEnd);
+                            break;
+                        default:
+                            ShowDialog(3);
+                            break;
+                    }
+
+                    break;
+            }
+        }
+
+        private void SetGameEnd()
+        {
+            _playerDataController.SetScore(0);
+            _isGameEnd = true;
+        }
+
+        private void ShowDialog(int id, Action onFinish = null)
+        {
+            _input.Lock();
+            _dialog.StartDialog(id, () =>
+            {
+                _input.Unlock();
+                onFinish?.Invoke();
+            });
+        }
+
+        private IEnumerator GameLoop()
+        {
+            while (true)
+            {
+                _isGameEnd = false;
+
+                _input.Lock();
+
+                ReturnPlayerToStartPosition();
+                TurnOnInteractedObjects();
+
+                yield return ShowStartMessage();
+
+                _input.Unlock();
+
+                yield return LevelFinish();
+
+                Debug.Log($"Restart game");
+            }
+        }
+
+        private void ReturnPlayerToStartPosition()
+        {
+            _player.transform.position = Vector3.zero;
+        }
+
         private IEnumerator ShowStartMessage()
         {
             var wait = new WaitForSeconds(1f);
@@ -52,38 +141,33 @@ namespace Igrohub
 
             Debug.Log($"Start game");
         }
-        
+
+        private void TurnOnInteractedObjects()
+        {
+            foreach (var interactable in _interactables)
+                interactable.gameObject.SetActive(true);
+        }
+
+        private IEnumerator LevelFinish()
+        {
+            // Ждем финального диалога 
+            while (!_isGameEnd)
+            {
+                if (Vector3.Distance(_player.transform.position, Vector3.zero) > 20)
+                {
+                    Debug.Log($"Finish game");
+                    yield break;
+                }
+
+                yield return null;
+            }
+        }
+
         private void Update()
         {
             var deltaTime = Time.deltaTime;
             foreach (var tickable in _tickables)
                 tickable.Tick(deltaTime);
-        }
-        
-        private void Interact(IPlayer player, IInteractable obj)
-        {
-            switch (obj)
-            {
-                case IScoreChanger coin:
-                    Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
-                    _playerDataController.AddToScore(coin.AddScoreAmount);
-                    coin.gameObject.SetActive(false);
-                    break;
-                case IDialogHandler dialog:
-                    Debug.Log($"Interact with {nameof(IDialogHandler)}. Need to start dialog");
-                    ShowDialog(1);
-                    break;
-            }
-        }
-        
-        private void ShowDialog(int id, Action onFinish = null)
-        {
-            _input.Lock();
-            _dialog.StartDialog(id, () =>
-            {
-                _input.Unlock();
-                onFinish?.Invoke();
-            });
         }
 
         private IInputSystem CreateInput()
@@ -93,22 +177,13 @@ namespace Igrohub
             return input;
         }
 
+        private IUserInterface CreatePlayerInterface() => FindFirstObjectByType<PlayerWidget>();
+        private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
         private IPlayer CreatePlayer()
         {
             var player = FindFirstObjectByType<Player>();
             _tickables.Add(player);
             return player;
         }
-
-        private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
-
-        private PlayerDataController CreateDataController()
-        {
-            var data = new PlayerData();
-            var view = CreatePlayerInterface();
-            return new PlayerDataController(view, data);
-        }
-
-        private IUserInterface CreatePlayerInterface() => FindFirstObjectByType<PlayerWidget>();
     }
 }
