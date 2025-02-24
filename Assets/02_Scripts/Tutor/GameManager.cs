@@ -153,7 +153,7 @@ namespace Igrohub
             // Ждем финального диалога 
             while (!_isGameEnd)
             {
-                if (Vector3.Distance(_player.transform.position, Vector3.zero) > 20)
+                if (Vector3.Distance(_player.transform.position, Vector3.zero) > 40)
                 {
                     Debug.Log($"Finish game");
                     yield break;
