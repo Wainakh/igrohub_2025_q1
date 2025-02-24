@@ -2,53 +2,56 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogManager : IDialogManager
+namespace ReadyGamePlay
 {
-    private DialogView _view;
-    private List<DialogConfig> _configs;
-    private DialogController _controller;
-
-    public DialogManager()
+    public class DialogManager : IDialogManager
     {
-        _configs = new List<DialogConfig>(Resources.LoadAll<DialogConfig>(""));
-        _view = CreateDialogView();
-        _view.HideAll();
-    }
+        private DialogView _view;
+        private List<DialogConfig> _configs;
+        private DialogController _controller;
 
-    private DialogView CreateDialogView() => UnityEngine.Object.FindFirstObjectByType<DialogView>();
-
-    public void InterruptDialog()
-    {
-        if (_controller != null)
-            _controller.Interrupt();
-    }
-
-    public void StartDialog(int configId, Action onFinish)
-    {
-        StartDialog(FindConfig(configId), onFinish);
-    }
-
-    private DialogConfig FindConfig(int configId)
-    {
-        foreach (var config in _configs)
-            if (config.Id.Equals(configId))
-                return config;
-        return null;
-    }
-
-    public void StartDialog(DialogConfig config, Action onFinish)
-    {
-        InterruptDialog();
-        
-        if(config == null)
-            return;
-
-        _controller = new DialogController(config, _view, () =>
+        public DialogManager()
         {
-            _controller.Interrupt();
-            _controller = null;
-            onFinish?.Invoke();
-        });
-        _controller.Start();
+            _configs = new List<DialogConfig>(Resources.LoadAll<DialogConfig>(""));
+            _view = CreateDialogView();
+            _view.HideAll();
+        }
+
+        private DialogView CreateDialogView() => UnityEngine.Object.FindFirstObjectByType<DialogView>();
+
+        public void InterruptDialog()
+        {
+            if (_controller != null)
+                _controller.Interrupt();
+        }
+
+        public void StartDialog(int configId, Action onFinish)
+        {
+            StartDialog(FindConfig(configId), onFinish);
+        }
+
+        private DialogConfig FindConfig(int configId)
+        {
+            foreach (var config in _configs)
+                if (config.Id.Equals(configId))
+                    return config;
+            return null;
+        }
+
+        public void StartDialog(DialogConfig config, Action onFinish)
+        {
+            InterruptDialog();
+        
+            if(config == null)
+                return;
+
+            _controller = new DialogController(config, _view, () =>
+            {
+                _controller.Interrupt();
+                _controller = null;
+                onFinish?.Invoke();
+            });
+            _controller.Start();
+        }
     }
 }

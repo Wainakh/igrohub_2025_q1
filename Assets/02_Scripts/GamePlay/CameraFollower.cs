@@ -1,19 +1,22 @@
 using UnityEngine;
 
-public class CameraFollower : MonoBehaviour
+namespace ReadyGamePlay
 {
-    private Transform _followTarget;
-    private Vector3 _offset;
-
-    public void SetFollowTarget(Transform target)
+    public class CameraFollower : MonoBehaviour
     {
-        _followTarget = target;
-        _offset = transform.position - _followTarget.position;
-    }
+        private Transform _followTarget;
+        private Vector3 _offset;
 
-    private void Update()
-    {
-        if (_followTarget != default)
-            transform.position = _followTarget.position + _offset;
+        public void SetFollowTarget(Transform target)
+        {
+            _followTarget = target;
+            _offset = transform.position - _followTarget.position;
+        }
+
+        private void Update()
+        {
+            if (_followTarget != default)
+                transform.position = _followTarget.position + _offset;
+        }
     }
 }

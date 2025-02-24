@@ -1,28 +1,31 @@
-public interface IPlayerDataController
+namespace ReadyGamePlay
 {
-    void AddToScore(int increaseValue);
-    int GetScore();
-    void SetScore(int value);
-}
-
-public class PlayerDataController : IPlayerDataController, MVC.IController
-{
-    private readonly IUserInterface _view;
-    private readonly IPlayerData _model;
-
-    public PlayerDataController(IUserInterface view, IPlayerData model)
+    public interface IPlayerDataController
     {
-        _model = model;
-        _view = view;
-        SetScore(0);
+        void AddToScore(int increaseValue);
+        int GetScore();
+        void SetScore(int value);
     }
 
-    public void SetScore(int value)
+    public class PlayerDataController : IPlayerDataController, MVC.IController
     {
-        _model.Score = value;
-        _view.UpdateScoreText(value);
-    }
+        private readonly IUserInterface _view;
+        private readonly IPlayerData _model;
 
-    public void AddToScore(int increaseValue) => SetScore(_model.Score + increaseValue);
-    public int GetScore() => _model.Score;
+        public PlayerDataController(IUserInterface view, IPlayerData model)
+        {
+            _model = model;
+            _view = view;
+            SetScore(0);
+        }
+
+        public void SetScore(int value)
+        {
+            _model.Score = value;
+            _view.UpdateScoreText(value);
+        }
+
+        public void AddToScore(int increaseValue) => SetScore(_model.Score + increaseValue);
+        public int GetScore() => _model.Score;
+    }
 }

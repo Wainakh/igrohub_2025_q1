@@ -1,5 +1,8 @@
 using UnityEngine;
 
-public class DialogHandler : MonoBehaviour, IDialogHandler
+namespace ReadyGamePlay
 {
+    public class DialogHandler : MonoBehaviour, IDialogHandler
+    {
+    }
 }

@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
-public class Coin : MonoBehaviour, IScoreChanger
+namespace ReadyGamePlay
 {
-    [SerializeField] private int _cost = 1;
-    public int AddScoreAmount => +_cost;
-    GameObject IInteractable.gameObject => base.gameObject;
+    [RequireComponent(typeof(Collider))]
+    public class Coin : MonoBehaviour, IScoreChanger
+    {
+        [SerializeField] private int _cost = 1;
+        public int AddScoreAmount => +_cost;
+        GameObject IInteractable.gameObject => base.gameObject;
+    }
 }

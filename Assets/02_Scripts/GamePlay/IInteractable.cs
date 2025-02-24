@@ -2,7 +2,10 @@
 
 using UnityEngine;
 
-public interface IInteractable
+namespace ReadyGamePlay
 {
-    GameObject gameObject { get; }
+    public interface IInteractable
+    {
+        GameObject gameObject { get; }
+    }
 }

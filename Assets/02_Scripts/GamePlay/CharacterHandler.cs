@@ -1,9 +1,12 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class CharacterHandler
+namespace ReadyGamePlay
 {
-    public string CharacterKey;
-    public GameObject GameObject;
+    [Serializable]
+    public class CharacterHandler
+    {
+        public string CharacterKey;
+        public GameObject GameObject;
+    }
 }

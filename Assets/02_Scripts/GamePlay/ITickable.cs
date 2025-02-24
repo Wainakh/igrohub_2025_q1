@@ -1,5 +1,9 @@
 ﻿// Update every frame
-public interface ITickable
+
+namespace ReadyGamePlay
 {
-    public void Tick(float deltaTime);
+    public interface ITickable
+    {
+        public void Tick(float deltaTime);
+    }
 }

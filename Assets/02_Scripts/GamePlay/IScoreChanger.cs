@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
-//Change score when interact
-internal interface IScoreChanger : IInteractable
+
+namespace ReadyGamePlay
 {
-    int AddScoreAmount { get; }
+    internal interface IScoreChanger : IInteractable
+    {
+        int AddScoreAmount { get; }
+    }
 }
+
+//Change score when interact

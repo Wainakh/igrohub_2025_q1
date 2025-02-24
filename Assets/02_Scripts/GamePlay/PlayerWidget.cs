@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerWidget : MonoBehaviour, IUserInterface, MVC.IView
+namespace ReadyGamePlay
 {
-    [SerializeField] private Text _scoreText;
-
-    public void UpdateScoreText(int value)
+    public class PlayerWidget : MonoBehaviour, IUserInterface, MVC.IView
     {
-        _scoreText.text = $"Score: {value}";
+        [SerializeField] private Text _scoreText;
+
+        public void UpdateScoreText(int value)
+        {
+            _scoreText.text = $"Score: {value}";
+        }
     }
 }

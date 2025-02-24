@@ -1,4 +1,8 @@
 ﻿// Start dialog when interact
-public interface IDialogHandler : IInteractable
+
+namespace ReadyGamePlay
 {
+    public interface IDialogHandler : IInteractable
+    {
+    }
 }

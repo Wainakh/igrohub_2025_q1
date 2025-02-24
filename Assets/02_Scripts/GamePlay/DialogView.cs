@@ -3,41 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogView : MonoBehaviour
+namespace ReadyGamePlay
 {
-    [SerializeField] private Text _text;
-    [SerializeField] private Button _button;
-    [SerializeField] private List<CharacterHandler> _characters = new List<CharacterHandler>();
-
-    private Action _onClick;
-
-    private void Awake()
+    public class DialogView : MonoBehaviour
     {
-        _button.onClick.AddListener(FinishSpeech);
-    }
+        [SerializeField] private Text _text;
+        [SerializeField] private Button _button;
+        [SerializeField] private List<CharacterHandler> _characters = new List<CharacterHandler>();
 
-    private void FinishSpeech()
-    {
-        _onClick?.Invoke();
-    }
+        private Action _onClick;
 
-    public void Show(SpeechData data, Action onFinish)
-    {
-        _onClick = onFinish;
-        _text.text = data.SpeechText;
+        private void Awake()
+        {
+            _button.onClick.AddListener(FinishSpeech);
+        }
 
-        foreach (var character in _characters)
-            character.GameObject.SetActive(character.CharacterKey.Equals(data.CharacterKey));
+        private void FinishSpeech()
+        {
+            _onClick?.Invoke();
+        }
+
+        public void Show(SpeechData data, Action onFinish)
+        {
+            _onClick = onFinish;
+            _text.text = data.SpeechText;
+
+            foreach (var character in _characters)
+                character.GameObject.SetActive(character.CharacterKey.Equals(data.CharacterKey));
         
-        gameObject.SetActive(true);
-    }
+            gameObject.SetActive(true);
+        }
 
-    public void HideAll()
-    {
-        _text.text = string.Empty;
-        _onClick = null;
-        gameObject.SetActive(false);
-        foreach (var character in _characters)
-            character.GameObject.SetActive(false);
+        public void HideAll()
+        {
+            _text.text = string.Empty;
+            _onClick = null;
+            gameObject.SetActive(false);
+            foreach (var character in _characters)
+                character.GameObject.SetActive(false);
+        }
     }
 }

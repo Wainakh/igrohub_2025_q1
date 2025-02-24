@@ -1,40 +1,43 @@
 using System;
 
-public class DialogController
+namespace ReadyGamePlay
 {
-    private DialogConfig _config;
-    private DialogView _view;
-    private Action _onFinish;
-    private int _speechId;
-
-    public DialogController(DialogConfig config, DialogView view, Action onFinish)
+    public class DialogController
     {
-        _config = config;
-        _view = view;
-        _onFinish = onFinish;
-    }
+        private DialogConfig _config;
+        private DialogView _view;
+        private Action _onFinish;
+        private int _speechId;
 
-    public void Interrupt() => TurnOfView();
-    public void Start() => ShowById(_speechId = 0);
-    private void ShowById(int id) => _view.Show(_config.GetSpeeches()[id], GoNext);
+        public DialogController(DialogConfig config, DialogView view, Action onFinish)
+        {
+            _config = config;
+            _view = view;
+            _onFinish = onFinish;
+        }
 
-    private void GoNext()
-    {
-        _speechId++;
-        if (_speechId < _config.GetSpeeches().Count)
-            ShowById(_speechId);
-        else
-            FinishDialog();
-    }
+        public void Interrupt() => TurnOfView();
+        public void Start() => ShowById(_speechId = 0);
+        private void ShowById(int id) => _view.Show(_config.GetSpeeches()[id], GoNext);
 
-    private void FinishDialog()
-    {
-        TurnOfView();
-        _onFinish?.Invoke();
-    }
+        private void GoNext()
+        {
+            _speechId++;
+            if (_speechId < _config.GetSpeeches().Count)
+                ShowById(_speechId);
+            else
+                FinishDialog();
+        }
+
+        private void FinishDialog()
+        {
+            TurnOfView();
+            _onFinish?.Invoke();
+        }
     
-    private void TurnOfView()
-    {
-        _view.HideAll();
+        private void TurnOfView()
+        {
+            _view.HideAll();
+        }
     }
 }

@@ -1,8 +1,11 @@
 using System;
 
-[Serializable]
-public class SpeechData
+namespace ReadyGamePlay
 {
-    public string CharacterKey;
-    public string SpeechText;
+    [Serializable]
+    public class SpeechData
+    {
+        public string CharacterKey;
+        public string SpeechText;
+    }
 }
