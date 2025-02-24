@@ -2,6 +2,8 @@
 
 namespace Igrohub
 {
+    [RequireComponent(typeof(Collider))]
+    [RequireComponent(typeof(Rigidbody))]
     public class Player : MonoBehaviour
     {
         [SerializeField] private float _speed;
@@ -37,6 +39,11 @@ namespace Igrohub
             movement *= Time.deltaTime;
             transform.Translate(movement);
             _movement = null;
+        }
+        
+        private void OnTriggerEnter(Collider other)
+        {
+            Debug.Log($"DETECT COLLIDER: {other.gameObject.name}");
         }
     }
 }
