@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Igrohub
 {
-    [CreateAssetMenu(menuName = "Configs/Dialog Config")]
+    [CreateAssetMenu(menuName = "Configs/Tutor Dialog Config")]
     public class DialogConfig : ScriptableObject
     {
         [SerializeField] private int _id;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace Igrohub
         private IInputSystem _input;
         private IPlayerDataController _playerDataController;
         private List<ITickable> _tickables = new List<ITickable>();
+        private IDialogManager _dialog;
 
 
         private IEnumerator Start()
@@ -33,6 +35,8 @@ namespace Igrohub
             _camera.SetFollowTarget(_player.transform);
 
             _playerDataController = CreateDataController();
+            
+            _dialog = new DialogManager();
             
             yield break;
         }
@@ -67,8 +71,19 @@ namespace Igrohub
                     break;
                 case IDialogHandler dialog:
                     Debug.Log($"Interact with {nameof(IDialogHandler)}. Need to start dialog");
+                    ShowDialog(1);
                     break;
             }
+        }
+        
+        private void ShowDialog(int id, Action onFinish = null)
+        {
+            _input.Lock();
+            _dialog.StartDialog(id, () =>
+            {
+                _input.Unlock();
+                onFinish?.Invoke();
+            });
         }
 
         private IInputSystem CreateInput()
