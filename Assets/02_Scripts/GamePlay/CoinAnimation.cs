@@ -1,21 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class CoinAnimation : MonoBehaviour
 {
     [SerializeField] private AnimationCurve _jumpAnimation;
     [SerializeField] private float _speed = 200;
-    private float step;
+    
+    private float _step;
 
-    private IEnumerator Start()
+    private void OnEnable() => StartCoroutine(Animate());
+
+    private IEnumerator Animate()
     {
         while (true)
         {
             transform.Rotate(Vector3.forward, _speed * Time.deltaTime);
-            step += Time.deltaTime;
-            if (step >= 1)
-                step -= 1;
-            transform.localPosition = Vector3.up * _jumpAnimation.Evaluate(step); 
+            _step += Time.deltaTime;
+            if (_step >= 1)
+                _step -= 1;
+            transform.localPosition = Vector3.up * _jumpAnimation.Evaluate(_step); 
             yield return null;
         }
     }

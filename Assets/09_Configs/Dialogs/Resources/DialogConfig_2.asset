@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a32b1e794724b8fa0450c8b24f0b31f, type: 3}
+  m_Name: DialogConfig_2
+  m_EditorClassIdentifier: 
+  _id: 2
+  _speechData:
+  - CharacterKey: Character1
+    SpeechText: Ha-ha-ha! Gotcha!
+  - CharacterKey: Character1
+    SpeechText: I deceived you!
+  - CharacterKey: Character2
+    SpeechText: What? Why?
+  - CharacterKey: Character1
+    SpeechText: Thank you for helping me collect the coins
+  - CharacterKey: Character1
+    SpeechText: Now I will delete your memories
+  - CharacterKey: Character2
+    SpeechText: No, please
+  - CharacterKey: Character1
+    SpeechText: See you next time

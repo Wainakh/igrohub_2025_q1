@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = System.Object;
 
 // GameManager - god obj. Реализация результата интеракции, очки, запуск диалогов. Бинды интеракций
 // Gameloop - старт, рестарт
@@ -9,13 +11,17 @@ public class GameManager : MonoBehaviour
     private CameraFollower _camera;
     private IPlayer _player;
     private IInputSystem _input;
+
     private List<IInteractable> _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
+
     private IUserInterface _ui;
     private IDialogManager _dialog;
     private IPlayerData _data;
 
     private List<ITickable> _tickables = new List<ITickable>();
     private IPlayerDataController _playerDataController;
+
+    private bool _isGameEnd;
 
     private IEnumerator Start()
     {
@@ -37,8 +43,10 @@ public class GameManager : MonoBehaviour
         _camera.SetFollowTarget(_player.transform);
 
         _playerDataController = CreateDataController();
-        
+
         _interactables = new List<IInteractable>(transform.GetComponentsInChildren<IInteractable>());
+
+        _dialog = new DialogManager();
 
         yield break;
     }
@@ -59,17 +67,42 @@ public class GameManager : MonoBehaviour
                 Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
                 _playerDataController.AddToScore(coin.AddScoreAmount);
                 coin.gameObject.SetActive(false);
+
+                //TODO: Temporary behaviour
+                if (_playerDataController.GetScore() == 1)
+                    ShowDialog(1);
+                else if (_playerDataController.GetScore() == 5)
+                    ShowDialog(2, SetGameEnd);
                 break;
             case IDialogHandler dialog:
                 Debug.Log($"Interact with {nameof(IDialogHandler)}. Start dialog");
+                ShowDialog(dialog.GetDialogConfigId(), SetGameEnd);
                 break;
         }
+    }
+
+    private void SetGameEnd()
+    {
+        _playerDataController.SetScore(0);
+        _isGameEnd = true;
+    }
+
+    private void ShowDialog(int id, Action onFinish = null)
+    {
+        _input.Lock();
+        _dialog.StartDialog(id, () =>
+        {
+            _input.Unlock();
+            onFinish?.Invoke();
+        });
     }
 
     private IEnumerator GameLoop()
     {
         while (true)
         {
+            _isGameEnd = false;
+            
             _input.Lock();
 
             ReturnPlayerToStartPosition();
@@ -80,7 +113,7 @@ public class GameManager : MonoBehaviour
             _input.Unlock();
 
             yield return LevelFinish();
-            
+
             Debug.Log($"Restart game");
         }
     }
@@ -111,7 +144,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator LevelFinish()
     {
         // Ждем финального диалога 
-        while (true)
+        while (!_isGameEnd)
         {
             if (Vector3.Distance(_player.transform.position, Vector3.zero) > 20)
             {
@@ -142,4 +175,3 @@ public class GameManager : MonoBehaviour
     private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
     private IPlayer CreatePlayer() => FindFirstObjectByType<Player>();
 }
-

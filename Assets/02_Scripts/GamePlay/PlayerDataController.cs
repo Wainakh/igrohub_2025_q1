@@ -1,27 +1,28 @@
-public interface IPlayerDataController 
+public interface IPlayerDataController
 {
     void AddToScore(int increaseValue);
+    int GetScore();
+    void SetScore(int value);
 }
 
 public class PlayerDataController : IPlayerDataController, MVC.IController
 {
     private readonly IUserInterface _view;
     private readonly IPlayerData _model;
+
     public PlayerDataController(IUserInterface view, IPlayerData model)
     {
         _model = model;
         _view = view;
-        SetNewScore(0);
+        SetScore(0);
     }
 
-    public void SetNewScore(int value)
+    public void SetScore(int value)
     {
         _model.Score = value;
         _view.UpdateScoreText(value);
     }
 
-    public void AddToScore(int increaseValue)
-    {
-        SetNewScore(_model.Score + increaseValue);
-    }
+    public void AddToScore(int increaseValue) => SetScore(_model.Score + increaseValue);
+    public int GetScore() => _model.Score;
 }
