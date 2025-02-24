@@ -12,8 +12,10 @@ public class GameManager : MonoBehaviour
     private List<IInteractable> _interactables = new List<IInteractable>(); // Для запоминания и сброса при перезапуска уровня
     private IUserInterface _ui;
     private IDialogManager _dialog;
+    private IPlayerData _data;
 
     private List<ITickable> _tickables = new List<ITickable>();
+    private IPlayerDataController _playerDataController;
 
     private IEnumerator Start()
     {
@@ -34,8 +36,18 @@ public class GameManager : MonoBehaviour
         _camera = CreateCamera();
         _camera.SetFollowTarget(_player.transform);
 
+        _playerDataController = CreateDataController();
+        
         _interactables = new List<IInteractable>(transform.GetComponentsInChildren<IInteractable>());
+
         yield break;
+    }
+
+    private PlayerDataController CreateDataController()
+    {
+        var data = new PlayerData();
+        var view = CreatePlayerInterface();
+        return new PlayerDataController(view, data);
     }
 
     private void Interact(IPlayer player, IInteractable obj)
@@ -45,6 +57,7 @@ public class GameManager : MonoBehaviour
             case IScoreChanger coin:
                 // _gameData.Score += coin.AddScoreAmount;
                 Debug.Log($"Interact with {nameof(IScoreChanger)}. Increase score => {coin.AddScoreAmount}");
+                _playerDataController.AddToScore(coin.AddScoreAmount);
                 coin.gameObject.SetActive(false);
                 break;
             case IDialogHandler dialog:
@@ -124,6 +137,9 @@ public class GameManager : MonoBehaviour
         return input;
     }
 
+
+    private IUserInterface CreatePlayerInterface() => FindFirstObjectByType<PlayerWidget>();
     private CameraFollower CreateCamera() => FindFirstObjectByType<CameraFollower>();
     private IPlayer CreatePlayer() => FindFirstObjectByType<Player>();
 }
+
