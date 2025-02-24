@@ -16,11 +16,14 @@ namespace Igrohub
         private IEnumerator Start()
         {
             yield return Initialization();
+            yield return ShowStartMessage();
+            _input.Unlock();
         }
         
         private IEnumerator Initialization()
         {
             _input = CreateInput();
+            _input.Lock();
 
             _player = CreatePlayer();
             _player.SetInput(_input);
@@ -32,6 +35,18 @@ namespace Igrohub
             _playerDataController = CreateDataController();
             
             yield break;
+        }
+        
+        private IEnumerator ShowStartMessage()
+        {
+            var wait = new WaitForSeconds(1f);
+            for (var i = 3; i > 0; i--)
+            {
+                Debug.Log($"Start in {i}");
+                yield return wait;
+            }
+
+            Debug.Log($"Start game");
         }
         
         private void Update()

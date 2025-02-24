@@ -6,5 +6,7 @@ namespace Igrohub
     public interface IInputSystem
     {
         event Action<Vector2> OnAxis;
+        void Unlock();
+        void Lock();
     }
 }
