@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a32b1e794724b8fa0450c8b24f0b31f, type: 3}
   m_Name: DialogConfig_4
   m_EditorClassIdentifier: 
-  _id: 1
+  _id: 4
   _speechData:
   - CharacterKey: Character1
     SpeechText: Hi!
